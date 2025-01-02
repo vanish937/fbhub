@@ -1,0 +1,101 @@
+if game.PlaceId == 9224601490 then
+	local Players = game:GetService("Players")
+	local Plr = game.Players.LocalPlayer
+	local Char = Plr.Character
+	local HumRp = Char.HumanoidRootPart
+	local FarmCFrame = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
+	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = false, ConfigFolder = "FBconfig"})
+	local main_data = Plr.MAIN_DATA
+	
+	
+	--Values
+	_G.safetp = false
+	_G.lvlfarm = false
+	
+	
+	--Functions
+	function autoSafeTp()
+		while _G.safetp == true do
+			HumRp.CFrame = FarmCFrame
+			wait(0.01)
+		end
+	end
+	
+	function autoFarmLvl()
+		while _G.lvlfarm == true do
+			wait(0.1)
+			local cd = false
+			for i,v in Plr.Backpack:GetChildren() do
+				print(i)
+				print(v.Name)
+				local Slot = main_data.Slot.Value
+				local Fruit = main_data.Slots[Slot].Value
+				local Lvl = main_data.Fruits[Fruit].Level.Value
+				if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl then
+					local args = {
+						[1] = tostring(Fruit),
+						[2] = v.Name:gsub(" ",""),
+						[3] = {}
+					}
+					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+					for x,y in Plr.Cooldowns:GetChildren() do
+						if y.Name == v.Name then
+							cd=true
+						else
+							cd=false
+						end
+					end
+				end
+				if cd == false then
+					local args = {
+						[1] = tostring(Fruit),
+						[2] = v.Name:gsub(" ",""),
+						[3] = {
+							["MouseRay"] = {
+								["Normal"] = Vector3.yAxis,
+								["Direction"] = Vector3.new(263.630615234375, -85.52350616455078, 114.82435607910156),
+								["Origin"] = Vector3.new(733.0144653320312, 709.29150390625, -1110.189208984375),
+								["Instance"] = workspace:WaitForChild("Map"):WaitForChild("Part"),
+								["Distance"] = 44.20985412597656,
+								["Material"] = Enum.Material.Sand,
+								["Position"] = Vector3.new(771.8646850585938, 696.688232421875, -1093.2679443359375)
+							}
+						}
+					}
+					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+				end
+				end
+			end
+		end
+	
+	
+	
+	--Tabs
+	local FarmTab = Window:MakeTab({
+		Name = "Farm",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	
+	
+	--FarmTab
+	FarmTab:AddToggle({
+		Name = "Safe tp",
+		Default = false,
+		Callback = function(Value)
+			_G.safetp = Value
+			autoSafeTp()
+		end    
+	})
+	
+	FarmTab:AddToggle({
+		Name = "Lvl farm",
+		Default = false,
+		Callback = function(Value)
+			_G.lvlfarm = Value
+			autoFarmLvl()
+		end    
+	})
+	
+end

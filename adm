@@ -83,7 +83,7 @@ if game.PlaceId == 9224601490 then
 						Body = body,
 					})
 				end
-				if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl then
+				if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl and tostring(v:GetAttribute("Key"))~="G" then
 					local args = {
 						[1] = tostring(Fruit),
 						[2] = v.Name:gsub(" ",""),

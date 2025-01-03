@@ -67,7 +67,7 @@ if game.PlaceId == 9224601490 then
 				if Lvl>lastLvl then
 					lastLvl=Lvl
 					local http = game:GetService("HttpService")
-					local webhook = "https://webhook.lewisakura.moe/api/webhooks/1324443875061796904/VAt-piL1tK85IepLPjVsWo9qsXKlyMtP8gL30N2VMMYpUQyn3sy2yghGC-GEjxMwD0_7" 
+					local webhook = "https://discord.com/api/webhooks/1324443875061796904/VAt-piL1tK85IepLPjVsWo9qsXKlyMtP8gL30N2VMMYpUQyn3sy2yghGC-GEjxMwD0_7" 
 
 					local data = {
 						["content"] = "Lvl up! You started with lvl ".. startLvl ..". Your lvl now is ".. Lvl .. ". \nIt was farming for " ..tonumber(Timer.Value)//60 .." minutes.\nAccount used is ".. Plr.Name .. "."					}

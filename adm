@@ -1,4 +1,4 @@
-if game.PlaceId == 9224601490 then
+
 	local FarmCFrame = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
 	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
@@ -29,16 +29,16 @@ if game.PlaceId == 9224601490 then
 	local TimerTween = TweenService:Create(Timer, TimerInfo, {Value = 9999999999})
 
 	TimerTween:Play()
-	
-	
+
+
 	--Values
 	_G.safetp = false
 	_G.lvlfarm = false
 	_G.marcofarm = false
-	
-	
+
+
 	--Functions
-	
+
 	function autoSafeTp()
 		while _G.safetp == true do
 			local Players = game:GetService("Players")
@@ -50,7 +50,7 @@ if game.PlaceId == 9224601490 then
 			wait(0.01)
 		end
 	end
-	
+
 	function autoFarmLvl()
 		while _G.lvlfarm == true do
 			local Players = game:GetService("Players")
@@ -117,9 +117,9 @@ if game.PlaceId == 9224601490 then
 					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
 				end
 			end
-			end
 		end
-	
+	end
+
 	function marcoFarm()
 		while _G.marcofarm == true do
 			local Players = game:GetService("Players")
@@ -144,8 +144,8 @@ if game.PlaceId == 9224601490 then
 		Icon = "rbxassetid://4483345998",
 		PremiumOnly = false
 	})
-	
-	
+
+
 	--FarmTab
 	FarmTab:AddToggle({
 		Name = "Safe tp",
@@ -155,7 +155,7 @@ if game.PlaceId == 9224601490 then
 			autoSafeTp()
 		end    
 	})
-	
+
 	FarmTab:AddToggle({
 		Name = "Lvl farm",
 		Default = false,
@@ -164,7 +164,7 @@ if game.PlaceId == 9224601490 then
 			autoFarmLvl()
 		end    
 	})
-	
+
 	FarmTab:AddToggle({
 		Name = "Marco tp",
 		Default = false,
@@ -173,8 +173,8 @@ if game.PlaceId == 9224601490 then
 			marcoFarm()
 		end    
 	})
-	
-	
+
+
 	--MiscTab
 	MiscTab:AddButton({
 		Name = "Server hop",
@@ -199,5 +199,3 @@ if game.PlaceId == 9224601490 then
 			TPS:TeleportToPlaceInstance(_place,Server.id,game.Players.LocalPlayer)
 		end    
 	})
-	
-end

@@ -1,0 +1,203 @@
+if game.PlaceId == 9224601490 then
+	local FarmCFrame = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
+	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
+	local HS = game:GetService("HttpService")
+	local WebhookURL = "https://discord.com/api/webhooks/1324443875061796904/VAt-piL1tK85IepLPjVsWo9qsXKlyMtP8gL30N2VMMYpUQyn3sy2yghGC-GEjxMwD0_7"
+	local Players = game:GetService("Players")
+	local Plr = game.Players.LocalPlayer
+	local Char = Plr.Character
+	local HumRp = Char.HumanoidRootPart
+	local main_data = Plr.MAIN_DATA
+	local Slot = main_data.Slot.Value
+	local Fruit = main_data.Slots[Slot].Value
+	local startLvl = main_data.Fruits[Fruit].Level.Value
+	local lastLvl = 1
+	local TweenService = game:GetService("TweenService")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+	local Timer = Instance.new("NumberValue")
+	Timer.Name = "Timer"
+	Timer.Parent = ReplicatedStorage
+
+	local TimerInfo = TweenInfo.new(
+		9999999999,
+		Enum.EasingStyle.Linear,
+		Enum.EasingDirection.InOut
+	)
+
+	local TimerTween = TweenService:Create(Timer, TimerInfo, {Value = 9999999999})
+
+	TimerTween:Play()
+	
+	
+	--Values
+	_G.safetp = false
+	_G.lvlfarm = false
+	_G.marcofarm = false
+	
+	
+	--Functions
+	
+	function autoSafeTp()
+		while _G.safetp == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			HumRp.CFrame = FarmCFrame
+			wait(0.01)
+		end
+	end
+	
+	function autoFarmLvl()
+		while _G.lvlfarm == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			wait(0.1)
+			local cd = false
+			for i,v in Plr.Backpack:GetChildren() do
+				local Slot = main_data.Slot.Value
+				local Fruit = main_data.Slots[Slot].Value
+				local Lvl = main_data.Fruits[Fruit].Level.Value
+				if Lvl>lastLvl then
+					lastLvl=Lvl
+					local http = game:GetService("HttpService")
+					local webhook = "https://webhook.lewisakura.moe/api/webhooks/1324443875061796904/VAt-piL1tK85IepLPjVsWo9qsXKlyMtP8gL30N2VMMYpUQyn3sy2yghGC-GEjxMwD0_7" 
+
+					local data = {
+						["content"] = "Lvl up! You started with lvl ".. startLvl ..". Your lvl now is ".. Lvl .. ". \nIt was farming for " ..tonumber(Timer.Value)//60 .." minutes.\nAccount used is ".. Plr.Name .. "."					}
+
+					local body = http:JSONEncode(data)
+
+					request({
+						Url = webhook,
+						Method = "POST",
+						Headers = {
+							["Content-Type"] = "application/json"
+						},
+						Body = body,
+					})
+				end
+				if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl then
+					local args = {
+						[1] = tostring(Fruit),
+						[2] = v.Name:gsub(" ",""),
+						[3] = {}
+					}
+					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+					for x,y in Plr.Cooldowns:GetChildren() do
+						if y.Name == v.Name then
+							cd=true
+						else
+							cd=false
+						end
+					end
+				end
+				if cd == false then
+					local args = {
+						[1] = tostring(Fruit),
+						[2] = v.Name:gsub(" ",""),
+						[3] = {
+							["MouseRay"] = {
+								["Normal"] = Vector3.yAxis,
+								["Direction"] = Vector3.new(263.630615234375, -85.52350616455078, 114.82435607910156),
+								["Origin"] = Vector3.new(733.0144653320312, 709.29150390625, -1110.189208984375),
+								["Instance"] = workspace:WaitForChild("Map"):WaitForChild("Part"),
+								["Distance"] = 44.20985412597656,
+								["Material"] = Enum.Material.Sand,
+								["Position"] = Vector3.new(771.8646850585938, 696.688232421875, -1093.2679443359375)
+							}
+						}
+					}
+					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+				end
+			end
+			end
+		end
+	
+	function marcoFarm()
+		while _G.marcofarm == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			HumRp.CFrame = workspace.Characters.NPCs.Marco.HumanoidRootPart.CFrame
+			wait(0.01)
+		end
+	end
+
+
+	--Tabs
+	local FarmTab = Window:MakeTab({
+		Name = "Farm",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	local MiscTab = Window:MakeTab({
+		Name = "Misc",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	
+	
+	--FarmTab
+	FarmTab:AddToggle({
+		Name = "Safe tp",
+		Default = false,
+		Callback = function(Value)
+			_G.safetp = Value
+			autoSafeTp()
+		end    
+	})
+	
+	FarmTab:AddToggle({
+		Name = "Lvl farm",
+		Default = false,
+		Callback = function(Value)
+			_G.lvlfarm = Value
+			autoFarmLvl()
+		end    
+	})
+	
+	FarmTab:AddToggle({
+		Name = "Marco tp",
+		Default = false,
+		Callback = function(Value)
+			_G.marcofarm = Value
+			marcoFarm()
+		end    
+	})
+	
+	
+	--MiscTab
+	MiscTab:AddButton({
+		Name = "Server hop",
+		Callback = function()
+			local Http = game:GetService("HttpService")
+			local TPS = game:GetService("TeleportService")
+			local Api = "https://games.roblox.com/v1/games/"
+
+			local _place = game.PlaceId
+			local _servers = Api.._place.."/servers/Public?sortOrder=Asc&limit=100"
+			function ListServers(cursor)
+				local Raw = game:HttpGet(_servers .. ((cursor and "&cursor="..cursor) or ""))
+				return Http:JSONDecode(Raw)
+			end
+
+			local Server, Next; repeat
+				local Servers = ListServers(Next)
+				Server = Servers.data[1]
+				Next = Servers.nextPageCursor
+			until Server
+
+			TPS:TeleportToPlaceInstance(_place,Server.id,game.Players.LocalPlayer)
+		end    
+	})
+	
+end

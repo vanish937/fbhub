@@ -1,4 +1,4 @@
-
+if game.PlaceId == 9224601490 then
 	local FarmCFrame = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
 	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
@@ -199,3 +199,5 @@
 			TPS:TeleportToPlaceInstance(_place,Server.id,game.Players.LocalPlayer)
 		end    
 	})
+
+end

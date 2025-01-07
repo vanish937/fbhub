@@ -48,7 +48,7 @@ if game.PlaceId == 9224601490 then
 			Time = 5
 		})
 	end
-	
+
 	function webhook()
 		local Slot = main_data.Slot.Value
 		local Fruit = main_data.Slots[Slot].Value
@@ -140,7 +140,7 @@ if game.PlaceId == 9224601490 then
 			end
 		end
 	end
-	
+
 	function marcoCheck()
 		if game.workspace.Characters.NPCs:FindFirstChild("Marco")~=nil then
 			OrionLib:MakeNotification({
@@ -158,7 +158,7 @@ if game.PlaceId == 9224601490 then
 			})
 		end
 	end
-	
+
 	function marcoFarm()
 		while _G.bossfarm == true do
 			local Players = game:GetService("Players")
@@ -226,14 +226,27 @@ if game.PlaceId == 9224601490 then
 			marcoCheck()
 		end    
 	})
-	
+
 	MiscTab:AddButton({
 		Name = "Titles",
 		Callback = function()
 			titlesCount()
 		end    
 	})
-	
+	MiscTab:AddButton({
+		Name = "Discord!",
+		Callback = function()
+			discordLink = "https://discord.gg/EQuKqDC6jB"
+			setclipboard(tostring(discordLink))
+			OrionLib:MakeNotification({
+				Name = "DiscordCopy",
+				Content = "Discord link copied to your clipboard",
+				Image = "rbxassetid://4483345998",
+				Time = 30
+			})
+		end    
+	})
+
 	MiscTab:AddButton({
 		Name = "Server hop",
 		Callback = function()
@@ -257,7 +270,7 @@ if game.PlaceId == 9224601490 then
 			TPS:TeleportToPlaceInstance(_place,Server.id,game.Players.LocalPlayer)
 		end    
 	})
-	
+
 	--WebhookTab
 	WebhookTab:AddTextbox({
 		Name = "Webhook link",
@@ -336,7 +349,7 @@ if game.PlaceId == 12413901502 then
 			})
 		end
 	end
-	
+
 	function titlesCount()
 		local titles = main_data.Titles:GetChildren()
 		local count = #titles
@@ -507,14 +520,27 @@ if game.PlaceId == 12413901502 then
 			titlesCount()
 		end    
 	})
-	
+
 	MiscTab:AddButton({
 		Name = "Kaido check",
 		Callback = function()
 			kaidoCheck()
 		end    
 	})
-	
+	MiscTab:AddButton({
+		Name = "Discord!",
+		Callback = function()
+			discordLink = "https://discord.gg/EQuKqDC6jB"
+			setclipboard(tostring(discordLink))
+			OrionLib:MakeNotification({
+				Name = "DiscordCopy",
+				Content = "Discord link copied to your clipboard",
+				Image = "rbxassetid://4483345998",
+				Time = 30
+			})
+		end    
+	})
+
 	MiscTab:AddButton({
 		Name = "Server hop",
 		Callback = function()

@@ -56,8 +56,13 @@ if game.PlaceId == 9224601490 then
 		local http = game:GetService("HttpService") 
 
 		local data = {
-			["content"] = "Lvl up!\nStart lvl: ".. startLvl .."\nLvl: ".. Lvl .. "\nTime spent: " ..tonumber(Timer.Value)//60 .." minutes and " ..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60) .. " seconds \nAccount: ".. Plr.Name .. "."					}
-
+			["content"] = "lvl up",
+			["embeds"] = {{
+				["title"] = "**LVL UP!**",
+				["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+				["color"] = 3767541
+			}}
+		}
 		local body = http:JSONEncode(data)
 
 		request({
@@ -350,8 +355,13 @@ if game.PlaceId == 12413901502 then
 		local http = game:GetService("HttpService") 
 
 		local data = {
-			["content"] = "Lvl up!\nStart lvl: ".. startLvl .."\nLvl: ".. Lvl .. "\nTime spent: " ..tonumber(Timer.Value)//60 .." minutes and " ..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60) .. " seconds \nAccount: ".. Plr.Name .. "."					}
-
+			["content"] = "lvl up",
+			["embeds"] = {{
+				["title"] = "**LVL UP!**",
+				["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+				["color"] = 3767541
+			}}
+		}
 		local body = http:JSONEncode(data)
 
 		request({

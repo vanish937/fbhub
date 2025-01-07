@@ -1,38 +1,105 @@
 if game.PlaceId == 9224601490 then
+	local FarmCFrameDresrosa = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
+	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
 	local Players = game:GetService("Players")
 	local Plr = game.Players.LocalPlayer
 	local Char = Plr.Character
 	local HumRp = Char.HumanoidRootPart
-	local FarmCFrame = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
-	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = false, ConfigFolder = "FBconfig"})
 	local main_data = Plr.MAIN_DATA
-	
-	
+	local Slot = main_data.Slot.Value
+	local Fruit = main_data.Slots[Slot].Value
+	local startLvl = main_data.Fruits[Fruit].Level.Value
+	local lastLvl = 1
+	local TweenService = game:GetService("TweenService")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local webhookLink = ""
+
+	local Timer = Instance.new("NumberValue")
+	Timer.Name = "Timer"
+	Timer.Parent = ReplicatedStorage
+
+	local TimerInfo = TweenInfo.new(
+		9999999999,
+		Enum.EasingStyle.Linear,
+		Enum.EasingDirection.InOut
+	)
+
+	local TimerTween = TweenService:Create(Timer, TimerInfo, {Value = 9999999999})
+
+	TimerTween:Play()
+
+
 	--Values
 	_G.safetp = false
 	_G.lvlfarm = false
-	
-	
+	_G.bossfarm = false
+	_G.webhook = false
+
+
 	--Functions
+	function titlesCount()
+		local titles = main_data.Titles:GetChildren()
+		local count = #titles
+		OrionLib:MakeNotification({
+			Name = "Titles",
+			Content = "You have "..count.." titles.",
+			Image = "rbxassetid://4483345998",
+			Time = 5
+		})
+	end
+	
+	function webhook()
+		local Slot = main_data.Slot.Value
+		local Fruit = main_data.Slots[Slot].Value
+		local Lvl = main_data.Fruits[Fruit].Level.Value
+		local http = game:GetService("HttpService") 
+
+		local data = {
+			["content"] = "Lvl up!\nStart lvl: ".. startLvl .."\nLvl: ".. Lvl .. "\nTime spent: " ..tonumber(Timer.Value)//60 .." minutes and " ..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60) .. " seconds \nAccount: ".. Plr.Name .. "."					}
+
+		local body = http:JSONEncode(data)
+
+		request({
+			Url = webhookLink,
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json"
+			},
+			Body = body,
+		})
+	end
+
 	function autoSafeTp()
 		while _G.safetp == true do
-			HumRp.CFrame = FarmCFrame
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			HumRp.CFrame = FarmCFrameDresrosa
 			wait(0.01)
 		end
 	end
-	
+
 	function autoFarmLvl()
 		while _G.lvlfarm == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
 			wait(0.1)
 			local cd = false
 			for i,v in Plr.Backpack:GetChildren() do
-				print(i)
-				print(v.Name)
 				local Slot = main_data.Slot.Value
 				local Fruit = main_data.Slots[Slot].Value
 				local Lvl = main_data.Fruits[Fruit].Level.Value
-				if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl then
+				if Lvl>lastLvl and _G.webhook==true then
+					lastLvl=Lvl
+					webhook(webhookLink)
+				end
+				if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl and tostring(v:GetAttribute("Key"))~="G" then
 					local args = {
 						[1] = tostring(Fruit),
 						[2] = v.Name:gsub(" ",""),
@@ -65,30 +132,69 @@ if game.PlaceId == 9224601490 then
 					}
 					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
 				end
-				end
 			end
 		end
+	end
 	
+	function marcoCheck()
+		if game.workspace.Characters.NPCs:FindFirstChild("Marco")~=nil then
+			OrionLib:MakeNotification({
+				Name = "MarcoCheck",
+				Content = "Marco is spawned",
+				Image = "rbxassetid://4483345998",
+				Time = 5
+			})
+		else
+			OrionLib:MakeNotification({
+				Name = "MarcoCheck",
+				Content = "Marco is not spawned",
+				Image = "rbxassetid://4483345998",
+				Time = 5
+			})
+		end
+	end
 	
-	
+	function marcoFarm()
+		while _G.bossfarm == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			HumRp.CFrame = workspace.Characters.NPCs.Marco.HumanoidRootPart.CFrame
+			wait(0.01)
+		end
+	end
+
+
 	--Tabs
 	local FarmTab = Window:MakeTab({
 		Name = "Farm",
 		Icon = "rbxassetid://4483345998",
 		PremiumOnly = false
 	})
-	
-	
+	local MiscTab = Window:MakeTab({
+		Name = "Misc",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	local WebhookTab = Window:MakeTab({
+		Name = "Webhook",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+
+
 	--FarmTab
 	FarmTab:AddToggle({
-		Name = "Safe tp",
+		Name = "Safe tp(Dressrosa)",
 		Default = false,
 		Callback = function(Value)
 			_G.safetp = Value
 			autoSafeTp()
 		end    
 	})
-	
+
 	FarmTab:AddToggle({
 		Name = "Lvl farm",
 		Default = false,
@@ -97,5 +203,346 @@ if game.PlaceId == 9224601490 then
 			autoFarmLvl()
 		end    
 	})
+
+	FarmTab:AddToggle({
+		Name = "Marco tp",
+		Default = false,
+		Callback = function(Value)
+			_G.bossfarm = Value
+			marcoFarm()
+		end    
+	})
+
+
+	--MiscTab
+	MiscTab:AddButton({
+		Name = "Marco check",
+		Callback = function()
+			marcoCheck()
+		end    
+	})
 	
+	MiscTab:AddButton({
+		Name = "Titles",
+		Callback = function()
+			titlesCount()
+		end    
+	})
+	
+	MiscTab:AddButton({
+		Name = "Server hop",
+		Callback = function()
+			local Http = game:GetService("HttpService")
+			local TPS = game:GetService("TeleportService")
+			local Api = "https://games.roblox.com/v1/games/"
+
+			local _place = game.PlaceId
+			local _servers = Api.._place.."/servers/Public?sortOrder=Asc&limit=100"
+			function ListServers(cursor)
+				local Raw = game:HttpGet(_servers .. ((cursor and "&cursor="..cursor) or ""))
+				return Http:JSONDecode(Raw)
+			end
+
+			local Server, Next; repeat
+				local Servers = ListServers(Next)
+				Server = Servers.data[1]
+				Next = Servers.nextPageCursor
+			until Server
+
+			TPS:TeleportToPlaceInstance(_place,Server.id,game.Players.LocalPlayer)
+		end    
+	})
+	
+	--WebhookTab
+	WebhookTab:AddTextbox({
+		Name = "Webhook link",
+		Default = "input",
+		TextDisappear = false,
+		Callback = function(Value)
+			webhookLink = Value
+		end	  
+	})
+	WebhookTab:AddToggle({
+		Name = "Webhook",
+		Default = false,
+		Callback = function(Value)
+			_G.webhook = Value
+		end    
+	})
+
+end
+
+--WANOHUB
+
+if game.PlaceId == 12413901502 then
+	local FarmCFrameDresrosa = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
+	local FarmCFrameWano = CFrame.new(-4824.37793, 1125.52502, 342.967834, 0.0142391939, 6.41749551e-08, -0.999898612, 6.03781913e-08, 1, 6.50412844e-08, 0.999898612, -6.12982021e-08, 0.0142391939)
+	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
+	local Players = game:GetService("Players")
+	local Plr = game.Players.LocalPlayer
+	local Char = Plr.Character
+	local HumRp = Char.HumanoidRootPart
+	local main_data = Plr.MAIN_DATA
+	local Slot = main_data.Slot.Value
+	local Fruit = main_data.Slots[Slot].Value
+	local startLvl = main_data.Fruits[Fruit].Level.Value
+	local lastLvl = 1
+	local TweenService = game:GetService("TweenService")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local webhookLink = ""
+
+	local Timer = Instance.new("NumberValue")
+	Timer.Name = "Timer"
+	Timer.Parent = ReplicatedStorage
+
+	local TimerInfo = TweenInfo.new(
+		9999999999,
+		Enum.EasingStyle.Linear,
+		Enum.EasingDirection.InOut
+	)
+
+	local TimerTween = TweenService:Create(Timer, TimerInfo, {Value = 9999999999})
+
+	TimerTween:Play()
+
+
+	--Values
+	_G.safetp = false
+	_G.lvlfarm = false
+	_G.bossfarm = false
+
+
+	--Functions
+	function kaidoCheck()
+		if game.workspace.Characters.NPCs:FindFirstChild("Kaido")~=nil then
+			OrionLib:MakeNotification({
+				Name = "KaidoCheck",
+				Content = "Kaido is spawned",
+				Image = "rbxassetid://4483345998",
+				Time = 5
+			})
+		else
+			OrionLib:MakeNotification({
+				Name = "KaidoCheck",
+				Content = "Kaido is not spawned",
+				Image = "rbxassetid://4483345998",
+				Time = 5
+			})
+		end
+	end
+	
+	function titlesCount()
+		local titles = main_data.Titles:GetChildren()
+		local count = #titles
+		OrionLib:MakeNotification({
+			Name = "Titles",
+			Content = "You have "..count.." titles.",
+			Image = "rbxassetid://4483345998",
+			Time = 5
+		})
+	end
+
+	function webhook()
+		local Slot = main_data.Slot.Value
+		local Fruit = main_data.Slots[Slot].Value
+		local Lvl = main_data.Fruits[Fruit].Level.Value
+		local http = game:GetService("HttpService") 
+
+		local data = {
+			["content"] = "Lvl up!\nStart lvl: ".. startLvl .."\nLvl: ".. Lvl .. "\nTime spent: " ..tonumber(Timer.Value)//60 .." minutes and " ..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60) .. " seconds \nAccount: ".. Plr.Name .. "."					}
+
+		local body = http:JSONEncode(data)
+
+		request({
+			Url = webhookLink,
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json"
+			},
+			Body = body,
+		})
+	end
+
+	function autoSafeTp()
+		while _G.safetp == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			HumRp.CFrame = FarmCFrameWano
+			wait(0.01)
+		end
+	end
+
+	function autoFarmLvl()
+		while _G.lvlfarm == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			wait(0.1)
+			local cd = false
+			for i,v in Plr.Backpack:GetChildren() do
+				local Slot = main_data.Slot.Value
+				local Fruit = main_data.Slots[Slot].Value
+				local Lvl = main_data.Fruits[Fruit].Level.Value
+				if Lvl>lastLvl and _G.webhook==true then
+					lastLvl=Lvl
+					webhook(webhookLink)
+				end
+				if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl and tostring(v:GetAttribute("Key"))~="G" then
+					local args = {
+						[1] = tostring(Fruit),
+						[2] = v.Name:gsub(" ",""),
+						[3] = {}
+					}
+					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+					for x,y in Plr.Cooldowns:GetChildren() do
+						if y.Name == v.Name then
+							cd=true
+						else
+							cd=false
+						end
+					end
+				end
+				if cd == false then
+					local args = {
+						[1] = tostring(Fruit),
+						[2] = v.Name:gsub(" ",""),
+						[3] = {
+							["MouseRay"] = {
+								["Normal"] = Vector3.yAxis,
+								["Direction"] = Vector3.new(263.630615234375, -85.52350616455078, 114.82435607910156),
+								["Origin"] = Vector3.new(733.0144653320312, 709.29150390625, -1110.189208984375),
+								["Instance"] = workspace:WaitForChild("Map"):WaitForChild("Part"),
+								["Distance"] = 44.20985412597656,
+								["Material"] = Enum.Material.Sand,
+								["Position"] = Vector3.new(771.8646850585938, 696.688232421875, -1093.2679443359375)
+							}
+						}
+					}
+					game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+				end
+			end
+		end
+	end
+
+	function kaidoFarm()
+		while _G.bossfarm == true do
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			local main_data = Plr.MAIN_DATA
+			HumRp.CFrame = workspace.Characters.NPCs.Kaido.HumanoidRootPart.CFrame
+			wait(0.01)
+		end
+	end
+
+
+	--Tabs
+	local FarmTab = Window:MakeTab({
+		Name = "Farm",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	local MiscTab = Window:MakeTab({
+		Name = "Misc",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	local WebhookTab = Window:MakeTab({
+		Name = "Webhook",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+
+
+	--FarmTab
+	FarmTab:AddToggle({
+		Name = "Safe tp(Wano)",
+		Default = false,
+		Callback = function(Value)
+			_G.safetp = Value
+			autoSafeTp()
+		end    
+	})
+
+	FarmTab:AddToggle({
+		Name = "Lvl farm",
+		Default = false,
+		Callback = function(Value)
+			_G.lvlfarm = Value
+			autoFarmLvl()
+		end    
+	})
+
+	FarmTab:AddToggle({
+		Name = "Kaido tp",
+		Default = false,
+		Callback = function(Value)
+			_G.bossfarm = Value
+			kaidoFarm()
+		end    
+	})
+
+
+	--MiscTab
+	MiscTab:AddButton({
+		Name = "Titles",
+		Callback = function()
+			titlesCount()
+		end    
+	})
+	
+	MiscTab:AddButton({
+		Name = "Kaido check",
+		Callback = function()
+			kaidoCheck()
+		end    
+	})
+	
+	MiscTab:AddButton({
+		Name = "Server hop",
+		Callback = function()
+			local Http = game:GetService("HttpService")
+			local TPS = game:GetService("TeleportService")
+			local Api = "https://games.roblox.com/v1/games/"
+
+			local _place = game.PlaceId
+			local _servers = Api.._place.."/servers/Public?sortOrder=Asc&limit=100"
+			function ListServers(cursor)
+				local Raw = game:HttpGet(_servers .. ((cursor and "&cursor="..cursor) or ""))
+				return Http:JSONDecode(Raw)
+			end
+
+			local Server, Next; repeat
+				local Servers = ListServers(Next)
+				Server = Servers.data[1]
+				Next = Servers.nextPageCursor
+			until Server
+
+			TPS:TeleportToPlaceInstance(_place,Server.id,game.Players.LocalPlayer)
+		end    
+	})
+
+	--WebhookTab
+	WebhookTab:AddTextbox({
+		Name = "Webhook link",
+		Default = "input",
+		TextDisappear = false,
+		Callback = function(Value)
+			webhookLink = Value
+		end	  
+	})
+	WebhookTab:AddToggle({
+		Name = "Webhook",
+		Default = false,
+		Callback = function(Value)
+			_G.webhook = Value
+		end    
+	})
 end

@@ -4,16 +4,17 @@ if game.PlaceId == 9224601490 then
 	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
 	local Players = game:GetService("Players")
 	local Plr = game.Players.LocalPlayer
-	local Char = Plr.Character
-	local HumRp = Char.HumanoidRootPart
 	local main_data = Plr.MAIN_DATA
 	local Slot = main_data.Slot.Value
 	local Fruit = main_data.Slots[Slot].Value
 	local startLvl = main_data.Fruits[Fruit].Level.Value
-	local lastLvl = 1
+	local lastLvl = startLvl
 	local TweenService = game:GetService("TweenService")
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
 	local webhookLink = ""
+	local world = 9224601490
+	local TpTo = ""
+	local Kuma=workspace.NPCs.Kuma.HumanoidRootPart.CFrame
 
 	local Timer = Instance.new("NumberValue")
 	Timer.Name = "Timer"
@@ -38,6 +39,14 @@ if game.PlaceId == 9224601490 then
 
 
 	--Functions
+	function teleportTo()
+		local Players = game:GetService("Players")
+		local Plr = game.Players.LocalPlayer
+		local Char = Plr.Character
+		local HumRp = Char.HumanoidRootPart
+		HumRp.CFrame = TpTo
+	end
+	
 	function titlesCount()
 		local titles = main_data.Titles:GetChildren()
 		local count = #titles
@@ -55,24 +64,47 @@ if game.PlaceId == 9224601490 then
 		local Lvl = main_data.Fruits[Fruit].Level.Value
 		local http = game:GetService("HttpService") 
 
-		local data = {
-			["content"] = "lvl up",
-			["embeds"] = {{
-				["title"] = "**LVL UP!**",
-				["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
-				["color"] = 3767541
-			}}
-		}
-		local body = http:JSONEncode(data)
+		if Lvl/100==1 or Lvl/100==2 or Lvl/100==3 then
+			local data = {
+				["content"] = "@everyone",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+			local body = http:JSONEncode(data)
 
-		request({
-			Url = webhookLink,
-			Method = "POST",
-			Headers = {
-				["Content-Type"] = "application/json"
-			},
-			Body = body,
-		})
+			request({
+				Url = webhookLink,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = body,
+			})
+		else
+			local data = {
+				["content"] = "lvl up",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+			local body = http:JSONEncode(data)
+
+			request({
+				Url = webhookLink,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = body,
+			})
+		end
+
+
 	end
 
 	function autoSafeTp()
@@ -171,10 +203,28 @@ if game.PlaceId == 9224601490 then
 		end
 	end
 
+	function worldChange()
+		local TeleportService = game:GetService("TeleportService")
+		TeleportService:Teleport(world, Plr)
+	end
+	
+	function teleportTo()
+		local Players = game:GetService("Players")
+		local Plr = game.Players.LocalPlayer
+		local Char = Plr.Character
+		local HumRp = Char.HumanoidRootPart
+		HumRp.CFrame = TpTo
+	end
+
 
 	--Tabs
 	local FarmTab = Window:MakeTab({
 		Name = "Farm",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	local TpTab = Window:MakeTab({
+		Name = "Teleport",
 		Icon = "rbxassetid://4483345998",
 		PremiumOnly = false
 	})
@@ -215,6 +265,51 @@ if game.PlaceId == 9224601490 then
 		Callback = function(Value)
 			_G.bossfarm = Value
 			marcoFarm()
+		end    
+	})
+
+	--TpTab
+	TpTab:AddButton({
+		Name = "Colloseum",
+		Callback = function()
+			TpTo = CFrame.new(757.494019, 742.399048, 811.400818, -0.00573175494, -0.0293798372, 0.999551892, 8.99151598e-09, 0.999568284, 0.0293803196, -0.999983549, 0.000168409781, -0.00572928041)
+			teleportTo()
+		end    
+	})
+	TpTab:AddButton({
+		Name = "Doflamingo mansion",
+		Callback = function()
+			TpTo = CFrame.new(-32.0537109, 1029.52332, -77.6388702, -0.99998349, 0.000466552592, -0.00573224807, 9.33047062e-09, 0.99670428, 0.0811209828, 0.00575120328, 0.0811196417, -0.99668777)
+			teleportTo()
+		end    
+	})
+	TpTab:AddButton({
+		Name = "Marco hill",
+		Callback = function()
+			TpTo = CFrame.new(-912.851257, 962.408325, 602.890991, 0.018306803, 0.090503037, -0.995727897, 6.63992239e-09, 0.99589479, 0.0905182064, 0.999832392, -0.00165710563, 0.018231649)
+			teleportTo()
+		end    
+	})
+	TpTab:AddButton({
+		Name = "Kuma",
+		Callback = function()
+			TpTo = Kuma
+			teleportTo()
+		end
+	})
+	
+	TpTab:AddButton({
+		Name = "Whole cake tp",
+		Callback = function()
+			world = 16190471004
+			worldChange(world)
+		end    
+	})
+	TpTab:AddButton({
+		Name = "Onigashima tp",
+		Callback = function()
+			world = 12413901502
+			worldChange(world)
 		end    
 	})
 
@@ -290,25 +385,28 @@ if game.PlaceId == 9224601490 then
 
 end
 
---WANOHUB
 
-if game.PlaceId == 12413901502 then
+--CakeHUB
+
+if game.PlaceId == 16190471004 then
 	local FarmCFrameDresrosa = CFrame.new(751.431519, 699.68811, -1114.24243, -0.99989295, 2.33387905e-08, 0.0146315759, 2.37163285e-08, 1, 2.56294967e-08, -0.0146315759, 2.597376e-08, -0.99989295)
 	local FarmCFrameWano = CFrame.new(-4824.37793, 1125.52502, 342.967834, 0.0142391939, 6.41749551e-08, -0.999898612, 6.03781913e-08, 1, 6.50412844e-08, 0.999898612, -6.12982021e-08, 0.0142391939)
+	local FarmCFrameCake = CFrame.new(130.623718, -516.615601, -2869.77466, -0.934928536, -3.36826105e-08, -0.354836047, -2.14494573e-08, 1, -3.84090022e-08, 0.354836047, -2.8298631e-08, -0.934928536)
 	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
 	local Players = game:GetService("Players")
 	local Plr = game.Players.LocalPlayer
-	local Char = Plr.Character
-	local HumRp = Char.HumanoidRootPart
 	local main_data = Plr.MAIN_DATA
 	local Slot = main_data.Slot.Value
 	local Fruit = main_data.Slots[Slot].Value
 	local startLvl = main_data.Fruits[Fruit].Level.Value
-	local lastLvl = 1
+	local lastLvl = startLvl
 	local TweenService = game:GetService("TweenService")
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
 	local webhookLink = ""
+	local world = 9224601490
+	local TpTo = ""
+	local Kuma=workspace.NPCs.Kuma.HumanoidRootPart.CFrame
 
 	local Timer = Instance.new("NumberValue")
 	Timer.Name = "Timer"
@@ -332,6 +430,371 @@ if game.PlaceId == 12413901502 then
 
 
 	--Functions
+	function bigmomCheck()
+		if game.workspace.Characters.NPCs:FindFirstChild("Big Mom")~=nil then
+			OrionLib:MakeNotification({
+				Name = "BigMomCheck",
+				Content = "Big Mom is spawned",
+				Image = "rbxassetid://4483345998",
+				Time = 5
+			})
+		else
+			OrionLib:MakeNotification({
+				Name = "BigMomCheck",
+				Content = "Big Mom is not spawned",
+				Image = "rbxassetid://4483345998",
+				Time = 5
+			})
+		end
+	end
+
+	function titlesCount()
+		local titles = main_data.Titles:GetChildren()
+		local count = #titles
+		OrionLib:MakeNotification({
+			Name = "Titles",
+			Content = "You have "..count.." titles.",
+			Image = "rbxassetid://4483345998",
+			Time = 5
+		})
+	end
+
+	function webhook()
+		local Slot = main_data.Slot.Value
+		local Fruit = main_data.Slots[Slot].Value
+		local Lvl = main_data.Fruits[Fruit].Level.Value
+		local http = game:GetService("HttpService") 
+
+		if Lvl/100==1 or Lvl/100==2 or Lvl/100==3 then
+			local data = {
+				["content"] = "@everyone",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+			local body = http:JSONEncode(data)
+
+			request({
+				Url = webhookLink,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = body,
+			})
+		else
+			local data = {
+				["content"] = "lvl up",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+		end
+	end
+
+		function worldChange()
+			local TeleportService = game:GetService("TeleportService")
+			TeleportService:Teleport(world, Plr)
+		end
+
+		function autoSafeTp()
+			while _G.safetp == true do
+				local Players = game:GetService("Players")
+				local Plr = game.Players.LocalPlayer
+				local Char = Plr.Character
+				local HumRp = Char.HumanoidRootPart
+				local main_data = Plr.MAIN_DATA
+				HumRp.CFrame = FarmCFrameCake
+				wait(0.01)
+			end
+		end
+
+		function autoFarmLvl()
+			while _G.lvlfarm == true do
+				local Players = game:GetService("Players")
+				local Plr = game.Players.LocalPlayer
+				local Char = Plr.Character
+				local HumRp = Char.HumanoidRootPart
+				local main_data = Plr.MAIN_DATA
+				wait(0.1)
+				local cd = false
+				for i,v in Plr.Backpack:GetChildren() do
+					local Slot = main_data.Slot.Value
+					local Fruit = main_data.Slots[Slot].Value
+					local Lvl = main_data.Fruits[Fruit].Level.Value
+					if Lvl>lastLvl and _G.webhook==true then
+						lastLvl=Lvl
+						webhook(webhookLink)
+					end
+					if v:IsA("Tool") and v:GetAttribute("Level")<=Lvl and tostring(v:GetAttribute("Key"))~="G" then
+						local args = {
+							[1] = tostring(Fruit),
+							[2] = v.Name:gsub(" ",""),
+							[3] = {}
+						}
+						game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+						for x,y in Plr.Cooldowns:GetChildren() do
+							if y.Name == v.Name then
+								cd=true
+							else
+								cd=false
+							end
+						end
+					end
+					if cd == false then
+						local args = {
+							[1] = tostring(Fruit),
+							[2] = v.Name:gsub(" ",""),
+							[3] = {
+								["MouseRay"] = {
+									["Normal"] = Vector3.yAxis,
+									["Direction"] = Vector3.new(263.630615234375, -85.52350616455078, 114.82435607910156),
+									["Origin"] = Vector3.new(733.0144653320312, 709.29150390625, -1110.189208984375),
+									["Instance"] = workspace:WaitForChild("Map"):WaitForChild("Part"),
+									["Distance"] = 44.20985412597656,
+									["Material"] = Enum.Material.Sand,
+									["Position"] = Vector3.new(771.8646850585938, 696.688232421875, -1093.2679443359375)
+								}
+							}
+						}
+						game:GetService("ReplicatedStorage"):WaitForChild("ReplicatorNoYield"):FireServer(unpack(args))
+					end
+				end
+			end
+		end
+
+		function BigMomFarm()
+			while _G.bossfarm == true do
+				local Players = game:GetService("Players")
+				local Plr = game.Players.LocalPlayer
+				local Char = Plr.Character
+				local HumRp = Char.HumanoidRootPart
+				local main_data = Plr.MAIN_DATA
+				HumRp.CFrame = workspace.Characters.NPCs.BigMom.HumanoidRootPart.CFrame
+				wait(0.01)
+			end
+		end
+		
+		function teleportTo()
+			local Players = game:GetService("Players")
+			local Plr = game.Players.LocalPlayer
+			local Char = Plr.Character
+			local HumRp = Char.HumanoidRootPart
+			HumRp.CFrame = TpTo
+		end
+
+
+		--Tabs
+		local FarmTab = Window:MakeTab({
+			Name = "Farm",
+			Icon = "rbxassetid://4483345998",
+			PremiumOnly = false
+		})
+		local TpTab = Window:MakeTab({
+			Name = "Teleport",
+			Icon = "rbxassetid://4483345998",
+			PremiumOnly = false
+		})
+		local MiscTab = Window:MakeTab({
+			Name = "Misc",
+			Icon = "rbxassetid://4483345998",
+			PremiumOnly = false
+		})
+		local WebhookTab = Window:MakeTab({
+			Name = "Webhook",
+			Icon = "rbxassetid://4483345998",
+			PremiumOnly = false
+		})
+
+
+		--FarmTab
+		FarmTab:AddToggle({
+			Name = "Safe tp(Whole Cake)",
+			Default = false,
+			Callback = function(Value)
+				_G.safetp = Value
+				autoSafeTp()
+			end    
+		})
+
+		FarmTab:AddToggle({
+			Name = "Lvl farm",
+			Default = false,
+			Callback = function(Value)
+				_G.lvlfarm = Value
+				autoFarmLvl()
+			end    
+		})
+
+		FarmTab:AddToggle({
+			Name = "Big Mom tp",
+			Default = false,
+			Callback = function(Value)
+				_G.bossfarm = Value
+				BigMomFarm()
+			end    
+		})
+
+		--TpTab
+		TpTab:AddButton({
+			Name = "Cake arena",
+			Callback = function()
+				TpTo = CFrame.new(1611.83423, 218.231873, -2613.854, 0.0174565744, 0.132934511, -0.990971088, 9.49276213e-09, 0.991122127, 0.132954776, 0.999847651, -0.00232094433, 0.0173015948)
+				teleportTo()
+			end    
+		})
+		TpTab:AddButton({
+			Name = "Katakuri domain",
+			Callback = function()
+				TpTo = CFrame.new(991.014038, -1017.396, -2978.35645, -0.946616709, -0.0383329242, 0.320074141, -9.49426582e-09, 0.992904723, 0.118912861, -0.32236138, 0.112564892, -0.93990016)
+				teleportTo()
+			end    
+		})
+		TpTab:AddButton({
+			Name = "Big Mom domain",
+			Callback = function()
+				TpTo = CFrame.new(565.136719, 149.149506, -2083.27588, -0.999972165, -3.68332955e-08, 0.0074584391, -3.72815379e-08, 1, -5.99594827e-08, -0.0074584391, -6.02358767e-08, -0.999972165)
+				teleportTo()
+			end    
+		})
+		TpTab:AddButton({
+			Name = "Kuma",
+			Callback = function()
+				TpTo = Kuma
+				teleportTo()
+			end
+		})
+		
+		TpTab:AddButton({
+			Name = "Onigashima tp",
+			Callback = function()
+				world = 12413901502
+				worldChange(world)
+			end    
+		})
+
+		--MiscTab
+		MiscTab:AddButton({
+			Name = "Titles",
+			Callback = function()
+				titlesCount()
+			end    
+		})
+
+		MiscTab:AddButton({
+			Name = "Big Mom check",
+			Callback = function()
+				bigmomCheck()
+			end    
+		})
+		MiscTab:AddButton({
+			Name = "Discord!",
+			Callback = function()
+				discordLink = "https://discord.gg/EQuKqDC6jB"
+				setclipboard(tostring(discordLink))
+				OrionLib:MakeNotification({
+					Name = "DiscordCopy",
+					Content = "Discord link copied to your clipboard",
+					Image = "rbxassetid://4483345998",
+					Time = 30
+				})
+			end    
+		})
+
+		MiscTab:AddButton({
+			Name = "Server hop",
+			Callback = function()
+				local Http = game:GetService("HttpService")
+				local TPS = game:GetService("TeleportService")
+				local Api = "https://games.roblox.com/v1/games/"
+
+				local _place = game.PlaceId
+				local _servers = Api.._place.."/servers/Public?sortOrder=Asc&limit=100"
+				function ListServers(cursor)
+					local Raw = game:HttpGet(_servers .. ((cursor and "&cursor="..cursor) or ""))
+					return Http:JSONDecode(Raw)
+				end
+
+				local Server, Next; repeat
+					local Servers = ListServers(Next)
+					Server = Servers.data[1]
+					Next = Servers.nextPageCursor
+				until Server
+
+				TPS:TeleportToPlaceInstance(_place,Server.id,game.Players.LocalPlayer)
+			end    
+		})
+
+		--WebhookTab
+		WebhookTab:AddTextbox({
+			Name = "Webhook link",
+			Default = "input",
+			TextDisappear = false,
+			Callback = function(Value)
+				webhookLink = Value
+			end	  
+		})
+		WebhookTab:AddToggle({
+			Name = "Webhook",
+			Default = false,
+			Callback = function(Value)
+				_G.webhook = Value
+			end    
+		})
+	end
+
+
+--WANOHUB
+
+if game.PlaceId == 12413901502 then
+	local FarmCFrameWano = CFrame.new(-4824.37793, 1125.52502, 342.967834, 0.0142391939, 6.41749551e-08, -0.999898612, 6.03781913e-08, 1, 6.50412844e-08, 0.999898612, -6.12982021e-08, 0.0142391939)
+	local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+	local Window = OrionLib:MakeWindow({Name = "Fruit Battlegrounds hub", HidePremium = false, IntroEnabled = false, SaveConfig = true, ConfigFolder = "FBconfig"})
+	local Players = game:GetService("Players")
+	local Plr = game.Players.LocalPlayer
+	local main_data = Plr.MAIN_DATA
+	local Slot = main_data.Slot.Value
+	local Fruit = main_data.Slots[Slot].Value
+	local startLvl = main_data.Fruits[Fruit].Level.Value
+	local lastLvl = startLvl
+	local TweenService = game:GetService("TweenService")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local webhookLink = ""
+	local world = 9224601490
+	local TpTo = ""
+	local Kuma=workspace.NPCs.Kuma.HumanoidRootPart.CFrame
+
+	local Timer = Instance.new("NumberValue")
+	Timer.Name = "Timer"
+	Timer.Parent = ReplicatedStorage
+
+	local TimerInfo = TweenInfo.new(
+		9999999999,
+		Enum.EasingStyle.Linear,
+		Enum.EasingDirection.InOut
+	)
+
+	local TimerTween = TweenService:Create(Timer, TimerInfo, {Value = 9999999999})
+
+	TimerTween:Play()
+
+
+	--Values
+	_G.safetp = false
+	_G.lvlfarm = false
+	_G.bossfarm = false
+
+
+	--Functions
+	function worldChange()
+		local TeleportService = game:GetService("TeleportService")
+		TeleportService:Teleport(world, Plr)
+	end
+
 	function kaidoCheck()
 		if game.workspace.Characters.NPCs:FindFirstChild("Kaido")~=nil then
 			OrionLib:MakeNotification({
@@ -367,24 +830,35 @@ if game.PlaceId == 12413901502 then
 		local Lvl = main_data.Fruits[Fruit].Level.Value
 		local http = game:GetService("HttpService") 
 
-		local data = {
-			["content"] = "lvl up",
-			["embeds"] = {{
-				["title"] = "**LVL UP!**",
-				["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
-				["color"] = 3767541
-			}}
-		}
-		local body = http:JSONEncode(data)
+		if Lvl/100==1 or Lvl/100==2 or Lvl/100==3 then
+			local data = {
+				["content"] = "@everyone",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+			local body = http:JSONEncode(data)
 
-		request({
-			Url = webhookLink,
-			Method = "POST",
-			Headers = {
-				["Content-Type"] = "application/json"
-			},
-			Body = body,
-		})
+			request({
+				Url = webhookLink,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = body,
+			})
+		else
+			local data = {
+				["content"] = "lvl up",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+		end
 	end
 
 	function autoSafeTp()
@@ -464,11 +938,23 @@ if game.PlaceId == 12413901502 then
 			wait(0.01)
 		end
 	end
-
+	
+	function teleportTo()
+		local Players = game:GetService("Players")
+		local Plr = game.Players.LocalPlayer
+		local Char = Plr.Character
+		local HumRp = Char.HumanoidRootPart
+		HumRp.CFrame = TpTo
+	end
 
 	--Tabs
 	local FarmTab = Window:MakeTab({
 		Name = "Farm",
+		Icon = "rbxassetid://4483345998",
+		PremiumOnly = false
+	})
+	local TpTab = Window:MakeTab({
+		Name = "Teleport",
 		Icon = "rbxassetid://4483345998",
 		PremiumOnly = false
 	})
@@ -512,6 +998,44 @@ if game.PlaceId == 12413901502 then
 		end    
 	})
 
+	--TpTab
+	
+	TpTab:AddButton({
+		Name = "Onigashima dock",
+		Callback = function()
+			TpTo = CFrame.new(-1237.2749, 195.028915, 403.617828, 0.0185414478, 0.0581103154, -0.998137951, -7.90034171e-09, 0.998309612, 0.0581203066, 0.9998281, -0.00107762683, 0.018510107)
+			teleportTo()
+		end    
+	})
+	TpTab:AddButton({
+		Name = "Momonosuke",
+		Callback = function()
+			TpTo = CFrame.new(-5173.21045, 703.679749, 375.155762, 0.303395152, -0.75290215, 0.5840289, -2.75449672e-08, 0.612918913, 0.790145814, -0.952864826, -0.239726424, 0.185956612)
+			teleportTo()
+		end    
+	})
+	TpTab:AddButton({
+		Name = "Kaido domain",
+		Callback = function()
+			TpTo = CFrame.new(-4426.38086, 1603.44263, 286.264709, 0.0247535557, 0.104979798, -0.994166255, 1.10977103e-08, 0.994470954, 0.105011977, 0.999693573, -0.00259943074, 0.0246166904)
+			teleportTo()
+		end    
+	})
+	TpTab:AddButton({
+		Name = "Kuma",
+		Callback = function()
+			TpTo = Kuma
+			teleportTo()
+		end    
+	})
+	
+	TpTab:AddButton({
+		Name = "Whole cake tp",
+		Callback = function()
+			world = 16190471004
+			worldChange(world)
+		end    
+	})
 
 	--MiscTab
 	MiscTab:AddButton({
@@ -579,6 +1103,6 @@ if game.PlaceId == 12413901502 then
 		Default = false,
 		Callback = function(Value)
 			_G.webhook = Value
-		end    
+		end
 	})
 end

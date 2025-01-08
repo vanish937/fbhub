@@ -630,14 +630,7 @@ if game.PlaceId == 16190471004 then
 			end    
 		})
 
-		FarmTab:AddToggle({
-			Name = "Big Mom tp",
-			Default = false,
-			Callback = function(Value)
-				_G.bossfarm = Value
-				BigMomFarm()
-			end    
-		})
+		
 
 		--TpTab
 		TpTab:AddButton({

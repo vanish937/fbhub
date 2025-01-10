@@ -1,0 +1,44 @@
+local Slot = main_data.Slot.Value
+		local Fruit = main_data.Slots[Slot].Value
+		local Lvl = main_data.Fruits[Fruit].Level.Value
+		local http = game:GetService("HttpService") 
+
+		if Lvl/100==1 or Lvl/100==2 or Lvl/100==3 then
+			local data = {
+				["content"] = "@everyone",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+			local body = http:JSONEncode(data)
+
+			request({
+				Url = webhookLink,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = body,
+			})
+		else
+			local data = {
+				["content"] = "",
+				["embeds"] = {{
+					["title"] = "**LVL UP!**",
+					["description"] = "**Lvl**: "..Lvl.. "\n**Time**\nFarming for"..tonumber(Timer.Value)//60 .." minutes and "..math.round(tonumber(Timer.Value)-(tonumber(Timer.Value)//60)*60).." seconds \n**Current player**\n||"..Plr.Name.."||\n\n[Van1 hub](https://discord.gg/EQuKqDC6jB) on top",
+					["color"] = 3767541
+				}}
+			}
+			local body = http:JSONEncode(data)
+
+			request({
+				Url = webhookLink,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = body,
+			})
+		end
